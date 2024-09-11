@@ -1,6 +1,6 @@
 const Router = require("express");
 const User = require("../models/User") 
-const bcrypt = require("bcryptjs")
+// const bcrypt = require("bcryptjs")
 const config = require("config")
 const jwt = require("jsonwebtoken")
 const {check, validationResult} = require("express-validator")
@@ -33,8 +33,8 @@ router.post('/registration',
         if (candidate){
             return res.status(400).json({message: 'Пользователь с таким номером телефона уже существует'})
         }
-        const hashPassword = await bcrypt.hash(password, 8)
-        const user = new User({phone, password: hashPassword, name, surname, selectedFilial, createdAt: new Date() })
+        // const hashPassword = await bcrypt.hash(password, 8)
+        const user = new User({phone, password: password, name, surname, selectedFilial, createdAt: new Date() })
         await user.save()
         return res.json({message: "Пользователь создан"})
 
@@ -57,8 +57,8 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({message: "Пользователь не найден"})
         }
         
-        const isPassValid = bcrypt.compareSync(password, user.password)
-        if(!isPassValid){
+        // const isPassValid = bcrypt.compareSync(password, user.password)
+        if(password != user.password){
             return res.status(400).json({message: "Неверный пароль!"})
         }
 
@@ -139,9 +139,9 @@ router.get('/profile', async (req, res) => {
                 phone: user.phone,
                 name: user.name,
                 surname: user.surname,
-                password: user.password,
                 email: user.email,
                 role: user.role,
+                password: user.password,
                 selectedFilial: user.selectedFilial,
                 createdAt: user.createdAt
             }
